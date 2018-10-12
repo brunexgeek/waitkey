@@ -1,394 +1,524 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 Bruno Ribeiro
+ * Website: https://github.com/brunexgeek/waitkey
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
-
-#ifndef BRUNEXGEEK_WAITKEY_H
-#define BRUNEXGEEK_WAITKEY_H
+#ifndef SINGLEFILE_WAITWKK_H
+#define SINGLEFILE_WAITWKK_H
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef WK_DEBUG
+#include <stdio.h>
+#endif
+
 
 enum
 {
     // ASCII keys
-    KEY_NONE = 0x00,
-    KEY_TAB = 0x09,
-    KEY_NEWLINE,
-    KEY_RETURN = 0x0D,
-    KEY_ESCAPE = 0x1B,
-    KEY_SPACE = 0x20,
-    KEY_EXCLAMATION,
-    KEY_DOUBLE_QUOTE,
-    KEY_HASH,
-    KEY_DOLLAR,
-    KEY_PERCENT,
-    KEY_AMPERSAND,
-    KEY_SINGLE_QUOTE,
-    KEY_LEFT_PAREN,
-    KEY_RIGHT_PAREN,
-    KEY_ASTERISK,
-    KEY_PLUS,
-    KEY_COMMA,
-    KEY_MINUS,
-    KEY_PERIOD,
-    KEY_SLASH,
-    KEY_0,
-    KEY_1,
-    KEY_2,
-    KEY_3,
-    KEY_4,
-    KEY_5,
-    KEY_6,
-    KEY_7,
-    KEY_8,
-    KEY_9,
-    KEY_COLON,
-    KEY_SEMICOLON,
-    KEY_LESS_THAN,
-    KEY_EQUALS,
-    KEY_GREATER_THAN,
-    KEY_QUESTION,
-    KEY_AT,
-    KEY_CAP_A,
-    KEY_CAP_B,
-    KEY_CAP_C,
-    KEY_CAP_D,
-    KEY_CAP_E,
-    KEY_CAP_F,
-    KEY_CAP_G,
-    KEY_CAP_H,
-    KEY_CAP_I,
-    KEY_CAP_J,
-    KEY_CAP_K,
-    KEY_CAP_L,
-    KEY_CAP_M,
-    KEY_CAP_N,
-    KEY_CAP_O,
-    KEY_CAP_P,
-    KEY_CAP_Q,
-    KEY_CAP_R,
-    KEY_CAP_S,
-    KEY_CAP_T,
-    KEY_CAP_U,
-    KEY_CAP_V,
-    KEY_CAP_W,
-    KEY_CAP_X,
-    KEY_CAP_Y,
-    KEY_CAP_Z,
-    KEY_LEFT_BRACKET,
-    KEY_BACKSLASH,
-    KEY_RIGHT_BRACKET,
-    KEY_CARET,
-    KEY_UNDERSCORE,
-    KEY_GRAVE,
-    KEY_A,
-    KEY_B,
-    KEY_C,
-    KEY_D,
-    KEY_E,
-    KEY_F,
-    KEY_G,
-    KEY_H,
-    KEY_I,
-    KEY_J,
-    KEY_K,
-    KEY_L,
-    KEY_M,
-    KEY_N,
-    KEY_O,
-    KEY_P,
-    KEY_Q,
-    KEY_R,
-    KEY_S,
-    KEY_T,
-    KEY_U,
-    KEY_V,
-    KEY_W,
-    KEY_X,
-    KEY_Y,
-    KEY_Z,
-    KEY_LEFT_CURLY,
-    KEY_PIPE,
-    KEY_RIGHT_CURLY,
-    KEY_TILDE,
-    KEY_BACKSPACE = 0x7F,
+    WKK_NONE = 0x00,
+    WKK_TAB = 0x09,
+    WKK_NEWLINE,
+    WKK_RETURN = 0x0D,
+    WKK_ESCAPE = 0x1B,
+    WKK_SPACE = 0x20,
+    WKK_EXCLAMATION,
+    WKK_DOUBLE_QUOTE,
+    WKK_HASH,
+    WKK_DOLLAR,
+    WKK_PERCENT,
+    WKK_AMPERSAND,
+    WKK_SINGLE_QUOTE,
+    WKK_LEFT_PAREN,
+    WKK_RIGHT_PAREN,
+    WKK_ASTERISK,
+    WKK_PLUS,
+    WKK_COMMA,
+    WKK_MINUS,
+    WKK_PERIOD,
+    WKK_SLASH,
+    WKK_0,
+    WKK_1,
+    WKK_2,
+    WKK_3,
+    WKK_4,
+    WKK_5,
+    WKK_6,
+    WKK_7,
+    WKK_8,
+    WKK_9,
+    WKK_COLON,
+    WKK_SEMICOLON,
+    WKK_LESS_THAN,
+    WKK_EQUALS,
+    WKK_GREATER_THAN,
+    WKK_QUESTION,
+    WKK_AT,
+    WKK_CAP_A,
+    WKK_CAP_B,
+    WKK_CAP_C,
+    WKK_CAP_D,
+    WKK_CAP_E,
+    WKK_CAP_F,
+    WKK_CAP_G,
+    WKK_CAP_H,
+    WKK_CAP_I,
+    WKK_CAP_J,
+    WKK_CAP_K,
+    WKK_CAP_L,
+    WKK_CAP_M,
+    WKK_CAP_N,
+    WKK_CAP_O,
+    WKK_CAP_P,
+    WKK_CAP_Q,
+    WKK_CAP_R,
+    WKK_CAP_S,
+    WKK_CAP_T,
+    WKK_CAP_U,
+    WKK_CAP_V,
+    WKK_CAP_W,
+    WKK_CAP_X,
+    WKK_CAP_Y,
+    WKK_CAP_Z,
+    WKK_LEFT_BRACKET,
+    WKK_BACKSLASH,
+    WKK_RIGHT_BRACKET,
+    WKK_CARET,
+    WKK_UNDERSCORE,
+    WKK_GRAVE,
+    WKK_A,
+    WKK_B,
+    WKK_C,
+    WKK_D,
+    WKK_E,
+    WKK_F,
+    WKK_G,
+    WKK_H,
+    WKK_I,
+    WKK_J,
+    WKK_K,
+    WKK_L,
+    WKK_M,
+    WKK_N,
+    WKK_O,
+    WKK_P,
+    WKK_Q,
+    WKK_R,
+    WKK_S,
+    WKK_T,
+    WKK_U,
+    WKK_V,
+    WKK_W,
+    WKK_X,
+    WKK_Y,
+    WKK_Z,
+    WKK_LEFT_CURLY,
+    WKK_PIPE,
+    WKK_RIGHT_CURLY,
+    WKK_TILDE,
+    WKK_BACKSPACE = 0x7F,
 
     // special keys
-    KEY_UP = 0x1000,
-    KEY_DOWN,
-    KEY_RIGHT,
-    KEY_LEFT,
-    KEY_DELETE,
-    KEY_HOME,
-    KEY_END,
-    KEY_PGUP,
-    KEY_PGDN,
-    KEY_INS,
+    WKK_UP = 0x1000,
+    WKK_DOWN,
+    WKK_RIGHT,
+    WKK_LEFT,
+    WKK_DELETE,
+    WKK_HOME,
+    WKK_END,
+    WKK_PGUP,
+    WKK_PGDN,
+    WKK_INS,
 };
 
-
+#ifndef WK_NO_NAMES
 const char *wk_keyName( int key );
+#endif
+
 int wk_waitKey();
+
+const char *wk_getTerm();
 
 
 #ifdef WK_IMPLEMENTATION
 
 
-#ifdef __WINDOWS__
+#if defined(_WIN32) || defined(_WIN64) || defined(_MSC_VER)
 #include <windows.h>
 #include <conio.h>
+#define WK_WINDOWS
 #else
 #include <unistd.h>
 #include <sys/stat.h>
 #include <langinfo.h>
 #include <termios.h>
+#include <sys/ioctl.h>
 #endif
+#include <stdlib.h>
+#include <string.h>
 
+
+static char WK_BUFFER[8];
+static int WK_BEGIN = 0;
+static int WK_COUNT = 0;
+
+
+static int wk_read_input( int fd )
+{
+    #ifdef WK_WINDOWS
+
+    return 0;
+
+    #else
+
+    struct termios t;
+    tcflag_t tc_previous = 0;
+    size_t pending = 0;
+    ssize_t result = 0;
+
+    if (WK_COUNT > 0) return 0;
+
+    // set terminal to non-canonical mode
+    tcgetattr(STDIN_FILENO, &t);
+    tc_previous = t.c_lflag;
+    t.c_lflag = t.c_lflag & (tcflag_t) (~(ICANON | ECHO));
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+    // wait for the next character
+    WK_BEGIN = WK_COUNT = 0;
+    result = read(fd, WK_BUFFER, 1);
+    if (result == 1)
+    {
+        WK_COUNT = 1;
+        // check whether we have any more data
+        ioctl(fd, FIONREAD, &pending);
+        if (pending > sizeof(WK_BUFFER) - (size_t) WK_COUNT)
+            pending = sizeof(WK_BUFFER) - (size_t) WK_COUNT;
+        if (pending)
+        {
+            result = read(fd, WK_BUFFER + WK_COUNT, pending);
+            if (result == (ssize_t) pending) WK_COUNT += (int) pending;
+        }
+        //printf("Read %d characters\n", WK_COUNT);
+    }
+
+    // restore terminal configuration
+    t.c_lflag = tc_previous;
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+    return WK_COUNT;
+
+    #endif
+}
+
+
+#ifndef WK_NO_NAMES
 
 const char *wk_keyName(
     int key )
 {
     switch (key)
     {
-        case KEY_TAB:           return "KEY_TAB";
-        case KEY_NEWLINE:       return "KEY_NEWLINE";
-        case KEY_RETURN:        return "KEY_RETURN";
-        case KEY_ESCAPE:        return "KEY_ESCAPE";
-        case KEY_SPACE:         return "KEY_SPACE";
-        case KEY_EXCLAMATION:   return "KEY_EXCLAMATION";
-        case KEY_DOUBLE_QUOTE:  return "KEY_DOUBLE_QUOTE";
-        case KEY_HASH:          return "KEY_HASH";
-        case KEY_DOLLAR:        return "KEY_DOLLAR";
-        case KEY_PERCENT:       return "KEY_PERCENT";
-        case KEY_AMPERSAND:     return "KEY_AMPERSAND";
-        case KEY_SINGLE_QUOTE:  return "KEY_SINGLE_QUOTE";
-        case KEY_LEFT_PAREN:    return "KEY_LEFT_PAREN";
-        case KEY_RIGHT_PAREN:   return "KEY_RIGHT_PAREN";
-        case KEY_ASTERISK:      return "KEY_ASTERISK";
-        case KEY_PLUS:          return "KEY_PLUS";
-        case KEY_COMMA:         return "KEY_COMMA";
-        case KEY_MINUS:         return "KEY_MINUS";
-        case KEY_PERIOD:        return "KEY_PERIOD";
-        case KEY_SLASH:         return "KEY_SLASH";
-        case KEY_0:             return "KEY_0";
-        case KEY_1:             return "KEY_1";
-        case KEY_2:             return "KEY_2";
-        case KEY_3:             return "KEY_3";
-        case KEY_4:             return "KEY_4";
-        case KEY_5:             return "KEY_5";
-        case KEY_6:             return "KEY_6";
-        case KEY_7:             return "KEY_7";
-        case KEY_8:             return "KEY_8";
-        case KEY_9:             return "KEY_9";
-        case KEY_COLON:         return "KEY_COLON";
-        case KEY_SEMICOLON:     return "KEY_SEMICOLON";
-        case KEY_LESS_THAN:     return "KEY_LESS_THAN";
-        case KEY_EQUALS:        return "KEY_EQUALS";
-        case KEY_GREATER_THAN:  return "KEY_GREATER_THAN";
-        case KEY_QUESTION:      return "KEY_QUESTION";
-        case KEY_AT:            return "KEY_AT";
-        case KEY_CAP_A:         return "KEY_CAP_A";
-        case KEY_CAP_B:         return "KEY_CAP_B";
-        case KEY_CAP_C:         return "KEY_CAP_C";
-        case KEY_CAP_D:         return "KEY_CAP_D";
-        case KEY_CAP_E:         return "KEY_CAP_E";
-        case KEY_CAP_F:         return "KEY_CAP_F";
-        case KEY_CAP_G:         return "KEY_CAP_G";
-        case KEY_CAP_H:         return "KEY_CAP_H";
-        case KEY_CAP_I:         return "KEY_CAP_I";
-        case KEY_CAP_J:         return "KEY_CAP_J";
-        case KEY_CAP_K:         return "KEY_CAP_K";
-        case KEY_CAP_L:         return "KEY_CAP_L";
-        case KEY_CAP_M:         return "KEY_CAP_M";
-        case KEY_CAP_N:         return "KEY_CAP_N";
-        case KEY_CAP_O:         return "KEY_CAP_O";
-        case KEY_CAP_P:         return "KEY_CAP_P";
-        case KEY_CAP_Q:         return "KEY_CAP_Q";
-        case KEY_CAP_R:         return "KEY_CAP_R";
-        case KEY_CAP_S:         return "KEY_CAP_S";
-        case KEY_CAP_T:         return "KEY_CAP_T";
-        case KEY_CAP_U:         return "KEY_CAP_U";
-        case KEY_CAP_V:         return "KEY_CAP_V";
-        case KEY_CAP_W:         return "KEY_CAP_W";
-        case KEY_CAP_X:         return "KEY_CAP_X";
-        case KEY_CAP_Y:         return "KEY_CAP_Y";
-        case KEY_CAP_Z:         return "KEY_CAP_Z";
-        case KEY_LEFT_BRACKET:  return "KEY_LEFT_BRACKET";
-        case KEY_BACKSLASH:     return "KEY_BACKSLASH";
-        case KEY_RIGHT_BRACKET: return "KEY_RIGHT_BRACKET";
-        case KEY_CARET:         return "KEY_CARET";
-        case KEY_UNDERSCORE:    return "KEY_UNDERSCORE";
-        case KEY_GRAVE:         return "KEY_GRAVE";
-        case KEY_A:             return "KEY_A";
-        case KEY_B:             return "KEY_B";
-        case KEY_C:             return "KEY_C";
-        case KEY_D:             return "KEY_D";
-        case KEY_E:             return "KEY_E";
-        case KEY_F:             return "KEY_F";
-        case KEY_G:             return "KEY_G";
-        case KEY_H:             return "KEY_H";
-        case KEY_I:             return "KEY_I";
-        case KEY_J:             return "KEY_J";
-        case KEY_K:             return "KEY_K";
-        case KEY_L:             return "KEY_L";
-        case KEY_M:             return "KEY_M";
-        case KEY_N:             return "KEY_N";
-        case KEY_O:             return "KEY_O";
-        case KEY_P:             return "KEY_P";
-        case KEY_Q:             return "KEY_Q";
-        case KEY_R:             return "KEY_R";
-        case KEY_S:             return "KEY_S";
-        case KEY_T:             return "KEY_T";
-        case KEY_U:             return "KEY_U";
-        case KEY_V:             return "KEY_V";
-        case KEY_W:             return "KEY_W";
-        case KEY_X:             return "KEY_X";
-        case KEY_Y:             return "KEY_Y";
-        case KEY_Z:             return "KEY_Z";
-        case KEY_LEFT_CURLY:    return "KEY_LEFT_CURLY";
-        case KEY_PIPE:          return "KEY_PIPE";
-        case KEY_RIGHT_CURLY:   return "KEY_RIGHT_CURLY";
-        case KEY_TILDE:         return "KEY_TILDE";
-        case KEY_BACKSPACE:     return "KEY_BACKSPACE";
-        case KEY_UP:            return "KEY_UP";
-        case KEY_DOWN:          return "KEY_DOWN";
-        case KEY_RIGHT:         return "KEY_RIGHT";
-        case KEY_LEFT:          return "KEY_LEFT";
-        case KEY_DELETE:        return "KEY_DELETE";
-        case KEY_HOME:          return "KEY_HOME";
-        case KEY_END:           return "KEY_END";
-        case KEY_PGUP:          return "KEY_PGUP";
-        case KEY_PGDN:          return "KEY_PGDN";
-        case KEY_INS:           return "KEY_INS";
-        default:                return "KEY_NONE";
+        case WKK_TAB:           return "WKK_TAB";
+        case WKK_NEWLINE:       return "WKK_NEWLINE";
+        case WKK_RETURN:        return "WKK_RETURN";
+        case WKK_ESCAPE:        return "WKK_ESCAPE";
+        case WKK_SPACE:         return "WKK_SPACE";
+        case WKK_EXCLAMATION:   return "WKK_EXCLAMATION";
+        case WKK_DOUBLE_QUOTE:  return "WKK_DOUBLE_QUOTE";
+        case WKK_HASH:          return "WKK_HASH";
+        case WKK_DOLLAR:        return "WKK_DOLLAR";
+        case WKK_PERCENT:       return "WKK_PERCENT";
+        case WKK_AMPERSAND:     return "WKK_AMPERSAND";
+        case WKK_SINGLE_QUOTE:  return "WKK_SINGLE_QUOTE";
+        case WKK_LEFT_PAREN:    return "WKK_LEFT_PAREN";
+        case WKK_RIGHT_PAREN:   return "WKK_RIGHT_PAREN";
+        case WKK_ASTERISK:      return "WKK_ASTERISK";
+        case WKK_PLUS:          return "WKK_PLUS";
+        case WKK_COMMA:         return "WKK_COMMA";
+        case WKK_MINUS:         return "WKK_MINUS";
+        case WKK_PERIOD:        return "WKK_PERIOD";
+        case WKK_SLASH:         return "WKK_SLASH";
+        case WKK_0:             return "WKK_0";
+        case WKK_1:             return "WKK_1";
+        case WKK_2:             return "WKK_2";
+        case WKK_3:             return "WKK_3";
+        case WKK_4:             return "WKK_4";
+        case WKK_5:             return "WKK_5";
+        case WKK_6:             return "WKK_6";
+        case WKK_7:             return "WKK_7";
+        case WKK_8:             return "WKK_8";
+        case WKK_9:             return "WKK_9";
+        case WKK_COLON:         return "WKK_COLON";
+        case WKK_SEMICOLON:     return "WKK_SEMICOLON";
+        case WKK_LESS_THAN:     return "WKK_LESS_THAN";
+        case WKK_EQUALS:        return "WKK_EQUALS";
+        case WKK_GREATER_THAN:  return "WKK_GREATER_THAN";
+        case WKK_QUESTION:      return "WKK_QUESTION";
+        case WKK_AT:            return "WKK_AT";
+        case WKK_CAP_A:         return "WKK_CAP_A";
+        case WKK_CAP_B:         return "WKK_CAP_B";
+        case WKK_CAP_C:         return "WKK_CAP_C";
+        case WKK_CAP_D:         return "WKK_CAP_D";
+        case WKK_CAP_E:         return "WKK_CAP_E";
+        case WKK_CAP_F:         return "WKK_CAP_F";
+        case WKK_CAP_G:         return "WKK_CAP_G";
+        case WKK_CAP_H:         return "WKK_CAP_H";
+        case WKK_CAP_I:         return "WKK_CAP_I";
+        case WKK_CAP_J:         return "WKK_CAP_J";
+        case WKK_CAP_K:         return "WKK_CAP_K";
+        case WKK_CAP_L:         return "WKK_CAP_L";
+        case WKK_CAP_M:         return "WKK_CAP_M";
+        case WKK_CAP_N:         return "WKK_CAP_N";
+        case WKK_CAP_O:         return "WKK_CAP_O";
+        case WKK_CAP_P:         return "WKK_CAP_P";
+        case WKK_CAP_Q:         return "WKK_CAP_Q";
+        case WKK_CAP_R:         return "WKK_CAP_R";
+        case WKK_CAP_S:         return "WKK_CAP_S";
+        case WKK_CAP_T:         return "WKK_CAP_T";
+        case WKK_CAP_U:         return "WKK_CAP_U";
+        case WKK_CAP_V:         return "WKK_CAP_V";
+        case WKK_CAP_W:         return "WKK_CAP_W";
+        case WKK_CAP_X:         return "WKK_CAP_X";
+        case WKK_CAP_Y:         return "WKK_CAP_Y";
+        case WKK_CAP_Z:         return "WKK_CAP_Z";
+        case WKK_LEFT_BRACKET:  return "WKK_LEFT_BRACKET";
+        case WKK_BACKSLASH:     return "WKK_BACKSLASH";
+        case WKK_RIGHT_BRACKET: return "WKK_RIGHT_BRACKET";
+        case WKK_CARET:         return "WKK_CARET";
+        case WKK_UNDERSCORE:    return "WKK_UNDERSCORE";
+        case WKK_GRAVE:         return "WKK_GRAVE";
+        case WKK_A:             return "WKK_A";
+        case WKK_B:             return "WKK_B";
+        case WKK_C:             return "WKK_C";
+        case WKK_D:             return "WKK_D";
+        case WKK_E:             return "WKK_E";
+        case WKK_F:             return "WKK_F";
+        case WKK_G:             return "WKK_G";
+        case WKK_H:             return "WKK_H";
+        case WKK_I:             return "WKK_I";
+        case WKK_J:             return "WKK_J";
+        case WKK_K:             return "WKK_K";
+        case WKK_L:             return "WKK_L";
+        case WKK_M:             return "WKK_M";
+        case WKK_N:             return "WKK_N";
+        case WKK_O:             return "WKK_O";
+        case WKK_P:             return "WKK_P";
+        case WKK_Q:             return "WKK_Q";
+        case WKK_R:             return "WKK_R";
+        case WKK_S:             return "WKK_S";
+        case WKK_T:             return "WKK_T";
+        case WKK_U:             return "WKK_U";
+        case WKK_V:             return "WKK_V";
+        case WKK_W:             return "WKK_W";
+        case WKK_X:             return "WKK_X";
+        case WKK_Y:             return "WKK_Y";
+        case WKK_Z:             return "WKK_Z";
+        case WKK_LEFT_CURLY:    return "WKK_LEFT_CURLY";
+        case WKK_PIPE:          return "WKK_PIPE";
+        case WKK_RIGHT_CURLY:   return "WKK_RIGHT_CURLY";
+        case WKK_TILDE:         return "WKK_TILDE";
+        case WKK_BACKSPACE:     return "WKK_BACKSPACE";
+        case WKK_UP:            return "WKK_UP";
+        case WKK_DOWN:          return "WKK_DOWN";
+        case WKK_RIGHT:         return "WKK_RIGHT";
+        case WKK_LEFT:          return "WKK_LEFT";
+        case WKK_DELETE:        return "WKK_DELETE";
+        case WKK_HOME:          return "WKK_HOME";
+        case WKK_END:           return "WKK_END";
+        case WKK_PGUP:          return "WKK_PGUP";
+        case WKK_PGDN:          return "WKK_PGDN";
+        case WKK_INS:           return "WKK_INS";
+        default:                return "WKK_NONE";
     }
 }
+
+#endif // !WK_NO_NAMES
 
 
 static int wk_interpret(
     const char value )
 {
-    // standard ASCII character
-    if (value != KEY_ESCAPE)
+    if (value != WKK_ESCAPE)
     {
-        if (value < KEY_TAB ||
-           (value > KEY_RETURN && value < KEY_ESCAPE) ||
-           (value > KEY_ESCAPE && value < KEY_SPACE) ||
-            value > KEY_BACKSPACE)
-            return KEY_NONE;
+        if (value < WKK_TAB ||
+           (value > WKK_RETURN && value < WKK_ESCAPE) ||
+           (value > WKK_ESCAPE && value < WKK_SPACE))
+            return WKK_NONE;
     }
-
     return (int) value;
 }
 
 
 static int wk_read()
 {
-    char current;
-    read(STDIN_FILENO, &current, sizeof(current));
-    //printf("%d\n", (int) current );
-    return wk_interpret(current);
+    if (WK_COUNT != 0 || wk_read_input(STDIN_FILENO) > 0)
+    {
+        //printf("Consumed 1 character from %d\n", WK_COUNT);
+        WK_COUNT--;
+        return wk_interpret(WK_BUFFER[WK_BEGIN++]);
+    }
+    return WKK_NONE;
 }
+
+/***** BEGIN OF AUTO-GENERATED CODE *****/
+static const char *WK_XTERM = "xterm";
+static const char *WK_LINUX = "linux";
+static const char *wk_currentTerm = NULL;
+
+static int wk_unix_waitKey()
+{
+    if (wk_getTerm() == WK_XTERM) /* yes, comparing pointers */
+    {
+        int input = wk_read();
+        if (input == WKK_ESCAPE)
+        {
+            int input = wk_read();
+            if (input == WKK_LEFT_BRACKET)
+            {
+                int input = wk_read();
+                if (input == WKK_CAP_H) return WKK_HOME;
+                else
+                if (input == WKK_3)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_DELETE;
+                }
+                else
+                if (input == WKK_2)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_INS;
+                }
+                else
+                if (input == WKK_5)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_PGUP;
+                }
+                else
+                if (input == WKK_6)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_PGDN;
+                }
+                else
+                if (input == WKK_CAP_A) return WKK_UP;
+                else
+                if (input == WKK_CAP_B) return WKK_DOWN;
+                else
+                if (input == WKK_CAP_C) return WKK_RIGHT;
+                else
+                if (input == WKK_CAP_D) return WKK_LEFT;
+                else
+                if (input == WKK_CAP_F) return WKK_END;
+            }
+        }
+        return input;
+    }
+    if (wk_getTerm() == WK_LINUX) /* yes, comparing pointers */
+    {
+        int input = wk_read();
+        if (input == WKK_ESCAPE)
+        {
+            int input = wk_read();
+            if (input == WKK_LEFT_BRACKET)
+            {
+                int input = wk_read();
+                if (input == WKK_1)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_HOME;
+                }
+                else
+                if (input == WKK_3)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_DELETE;
+                }
+                else
+                if (input == WKK_2)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_INS;
+                }
+                else
+                if (input == WKK_5)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_PGUP;
+                }
+                else
+                if (input == WKK_4)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_END;
+                }
+                else
+                if (input == WKK_6)
+                {
+                    int input = wk_read();
+                    if (input == WKK_TILDE) return WKK_PGDN;
+                }
+                else
+                if (input == WKK_CAP_A) return WKK_UP;
+                else
+                if (input == WKK_CAP_B) return WKK_DOWN;
+                else
+                if (input == WKK_CAP_C) return WKK_RIGHT;
+                else
+                if (input == WKK_CAP_D) return WKK_LEFT;
+            }
+        }
+        return input;
+    }
+    return WKK_NONE;
+}
+
+const char *wk_getTerm()
+{
+    static const char *wk_currentTerm = NULL;
+    if (wk_currentTerm != NULL) return wk_currentTerm;
+    wk_currentTerm = getenv("TERM");
+    if (wk_currentTerm == NULL) return wk_currentTerm = WK_XTERM;
+    if (strcmp(wk_currentTerm, "xterm") == 0) return wk_currentTerm = WK_XTERM;
+    if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WK_LINUX;
+    return wk_currentTerm = WK_XTERM;
+}
+/***** END OF AUTO-GENERATED CODE *****/
 
 
 int wk_waitKey()
 {
-    #ifdef __WINDOWS__
-
-    input = _getch();
-	// https://msdn.microsoft.com/en-us/library/078sfkak.aspx
-	if (input == 0xE0)
-		input = 0x00004000 | _getch();
-
+    #ifdef WK_WINDOWS
+    #error bla
     #else
-
-    struct termios t;
-
-    int input[4];
-    int output = KEY_NONE;
-    int ii = 0;
-
-    // disable input buffering
-    tcgetattr(STDIN_FILENO, &t);
-    cc_t cc_previous[2];
-    cc_previous[0] = t.c_cc[VTIME];
-	cc_previous[1] = t.c_cc[VMIN];
-    tcflag_t tc_previous = t.c_lflag;
-
-    t.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-    input[0] = wk_read();
-    if (input[0] == KEY_ESCAPE)
-    {
-        // enable timeout reading
-        t.c_cc[VTIME] = 0;
-        t.c_cc[VMIN] = 0;
-        tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-        input[1] = wk_read();
-        //std::cout << "Got #2 " << input << std::endl;
-        if (input[1] == KEY_LEFT_BRACKET)
-        {
-            // disable timeout reading
-            t.c_cc[VTIME] = cc_previous[0];
-            t.c_cc[VMIN] = cc_previous[1];
-            tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
-            input[2] = wk_read();
-            if (input[2] == KEY_CAP_A)
-                output = KEY_UP;
-            else
-            if (input[2] == KEY_CAP_B)
-                output = KEY_DOWN;
-            else
-            if (input[2] == KEY_CAP_C)
-                output = KEY_RIGHT;
-            else
-            if (input[2] == KEY_CAP_D)
-                output = KEY_LEFT;
-            else
-            if (input[2] == KEY_2 || input[2] == KEY_3 || input[2] == KEY_5 || input[2] == KEY_6)
-            {
-                input[3] = wk_read();
-                if (input[2] == KEY_2 && input[3] == KEY_TILDE)
-                    output = KEY_INS;
-                else
-                if (input[2] == KEY_3 && input[3] == KEY_TILDE)
-                    output = KEY_DELETE;
-                else
-                if (input[2] == KEY_5 && input[3] == KEY_TILDE)
-                    output = KEY_PGUP;
-                else
-                if (input[2] == KEY_6 && input[3] == KEY_TILDE)
-                    output = KEY_PGDN;
-            }
-            else
-            if (input[2] == KEY_CAP_H)
-                output = KEY_HOME;
-            else
-            if (input[2] == KEY_CAP_F)
-                output = KEY_END;
-        }
-        else
-            output = KEY_ESCAPE;
-    }
-    else
-        output = input[0];
-
-    // enable input buffering
-    tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag = tc_previous;
-	t.c_cc[VTIME] = cc_previous[0];
-	t.c_cc[VMIN] = cc_previous[1];
-    tcsetattr(STDIN_FILENO, TCSANOW, &t);
-
+    return wk_unix_waitKey();
     #endif
-
-    return output;
 }
-
 
 #endif // WK_IMPLEMENTATION
 
@@ -398,4 +528,4 @@ int wk_waitKey()
 #endif
 
 
-#endif // #ifndef BRUNEXGEEK_WAITKEY_H
+#endif // #ifndef SINGLEFILE_WAITWKK_H
