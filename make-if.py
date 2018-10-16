@@ -48,10 +48,10 @@ def makeTab(count):
 def printLevel( table, no ):
     indent = makeTab(no + 1)
     if ('value' in table):
-        print(' return %s;' % table['value'])
+        print(' RESET_AND_RETURN(%s);' % table['value'])
     else:
         print('\n%s{' % makeTab(no))
-        print('%sint input = wk_read();' % (indent))
+        print('%sint input = wk_read(%d);' % (indent, 1 if no == 1 else 0))
         count = len(table)
         for kl, vl in table.items():
             sys.stdout.write('%sif (input == %s)' % (indent, kl) )
@@ -60,7 +60,9 @@ def printLevel( table, no ):
             if (count > 0):
                 print('%selse' % indent)
         if (no == 1):
-            print('%sreturn input;' % indent)
+            print('%sRESET_AND_RETURN(input);' % indent)
+        else:
+            print('%sRESET_AND_RETURN(WKK_NONE);' % indent)
         print('%s}' % makeTab(no))
 
 
@@ -77,7 +79,7 @@ def printUnixWaitKey(terms):
     for kterm, vterm in terms.items():
         sys.stdout.write('%sif (wk_getTerm() == WK_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
         printLevel(vterm, 1)
-    print('%sreturn WKK_NONE;\n}' % indent)
+    print('%sRESET_AND_RETURN(WKK_NONE);\n}' % indent)
 
 
 def printGetTerm(terms):
@@ -116,6 +118,8 @@ with open('terms.txt', 'rt') as f:
             current['value'] = items[-1]
 
 print('/***** BEGIN OF AUTO-GENERATED CODE *****/')
+print('#define RESET_AND_RETURN(x)  do { WK_COUNT = 0; return (x); } while(0)')
 printUnixWaitKey(terms)
 printGetTerm(terms)
+print('#undef RESET_AND_RETURN')
 print('/***** END OF AUTO-GENERATED CODE *****/')

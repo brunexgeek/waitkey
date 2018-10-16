@@ -373,18 +373,23 @@ static int wk_interpret(
 }
 
 
-static int wk_read()
+static int wk_read(
+    int deviceRead )
 {
-    if (WK_COUNT != 0 || wk_read_input(STDIN_FILENO) > 0)
+    if (WK_COUNT != 0 || (deviceRead && wk_read_input(STDIN_FILENO) > 0))
     {
         //printf("Consumed 1 character from %d\n", WK_COUNT);
         WK_COUNT--;
+        #ifdef WK_DEBUG
+        printf("%d\n", WK_BUFFER[WK_BEGIN]);
+        #endif
         return wk_interpret(WK_BUFFER[WK_BEGIN++]);
     }
     return WKK_NONE;
 }
 
 /***** BEGIN OF AUTO-GENERATED CODE *****/
+#define RESET_AND_RETURN(x)  do { WK_COUNT = 0; return (x); } while(0)
 static const char *WK_XTERM = "xterm";
 static const char *WK_LINUX = "linux";
 static const char *wk_currentTerm = NULL;
@@ -393,109 +398,123 @@ static int wk_unix_waitKey()
 {
     if (wk_getTerm() == WK_XTERM) /* yes, comparing pointers */
     {
-        int input = wk_read();
+        int input = wk_read(1);
         if (input == WKK_ESCAPE)
         {
-            int input = wk_read();
+            int input = wk_read(0);
             if (input == WKK_LEFT_BRACKET)
             {
-                int input = wk_read();
-                if (input == WKK_CAP_H) return WKK_HOME;
+                int input = wk_read(0);
+                if (input == WKK_CAP_H) RESET_AND_RETURN(WKK_HOME);
                 else
                 if (input == WKK_3)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_DELETE;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_DELETE);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_2)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_INS;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_INS);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_5)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_PGUP;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_PGUP);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_6)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_PGDN;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_PGDN);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
-                if (input == WKK_CAP_A) return WKK_UP;
+                if (input == WKK_CAP_A) RESET_AND_RETURN(WKK_UP);
                 else
-                if (input == WKK_CAP_B) return WKK_DOWN;
+                if (input == WKK_CAP_B) RESET_AND_RETURN(WKK_DOWN);
                 else
-                if (input == WKK_CAP_C) return WKK_RIGHT;
+                if (input == WKK_CAP_C) RESET_AND_RETURN(WKK_RIGHT);
                 else
-                if (input == WKK_CAP_D) return WKK_LEFT;
+                if (input == WKK_CAP_D) RESET_AND_RETURN(WKK_LEFT);
                 else
-                if (input == WKK_CAP_F) return WKK_END;
+                if (input == WKK_CAP_F) RESET_AND_RETURN(WKK_END);
+                RESET_AND_RETURN(WKK_NONE);
             }
+            RESET_AND_RETURN(WKK_NONE);
         }
-        return input;
+        RESET_AND_RETURN(input);
     }
     if (wk_getTerm() == WK_LINUX) /* yes, comparing pointers */
     {
-        int input = wk_read();
+        int input = wk_read(1);
         if (input == WKK_ESCAPE)
         {
-            int input = wk_read();
+            int input = wk_read(0);
             if (input == WKK_LEFT_BRACKET)
             {
-                int input = wk_read();
+                int input = wk_read(0);
                 if (input == WKK_1)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_HOME;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_HOME);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_3)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_DELETE;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_DELETE);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_2)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_INS;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_INS);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_5)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_PGUP;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_PGUP);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_4)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_END;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_END);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
                 if (input == WKK_6)
                 {
-                    int input = wk_read();
-                    if (input == WKK_TILDE) return WKK_PGDN;
+                    int input = wk_read(0);
+                    if (input == WKK_TILDE) RESET_AND_RETURN(WKK_PGDN);
+                    RESET_AND_RETURN(WKK_NONE);
                 }
                 else
-                if (input == WKK_CAP_A) return WKK_UP;
+                if (input == WKK_CAP_A) RESET_AND_RETURN(WKK_UP);
                 else
-                if (input == WKK_CAP_B) return WKK_DOWN;
+                if (input == WKK_CAP_B) RESET_AND_RETURN(WKK_DOWN);
                 else
-                if (input == WKK_CAP_C) return WKK_RIGHT;
+                if (input == WKK_CAP_C) RESET_AND_RETURN(WKK_RIGHT);
                 else
-                if (input == WKK_CAP_D) return WKK_LEFT;
+                if (input == WKK_CAP_D) RESET_AND_RETURN(WKK_LEFT);
+                RESET_AND_RETURN(WKK_NONE);
             }
+            RESET_AND_RETURN(WKK_NONE);
         }
-        return input;
+        RESET_AND_RETURN(input);
     }
-    return WKK_NONE;
+    RESET_AND_RETURN(WKK_NONE);
 }
 
 const char *wk_getTerm()
@@ -508,6 +527,7 @@ const char *wk_getTerm()
     if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WK_LINUX;
     return wk_currentTerm = WK_XTERM;
 }
+#undef RESET_AND_RETURN
 /***** END OF AUTO-GENERATED CODE *****/
 
 
