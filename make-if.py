@@ -72,7 +72,6 @@ def printUnixWaitKey(terms):
     # static variables for each known terminal
     for kterm, vterm in terms.items():
         print('static const char *WK_%s = "%s";' % (kterm.upper(), kterm))
-    print('static const char *wk_currentTerm = NULL;')
 
     # print 'wk_unix_waitKey' function
     print('\nstatic int wk_unix_waitKey()\n{')

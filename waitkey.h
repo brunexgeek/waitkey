@@ -188,9 +188,19 @@ static int WK_COUNT = 0;
 
 static int wk_read_input( int fd )
 {
+    if (WK_COUNT > 0) return 0;
+
+    WK_BEGIN = WK_COUNT = 0;
+
     #ifdef WK_WINDOWS
 
-    return 0;
+    (void) fd;
+
+    // wait for the first character
+    WK_BUFFER[WK_COUNT++] = _getch();
+    // read all remaining characters
+    while (kbhit() && WK_COUNT < sizeof(WK_BUFFER))
+        WK_BUFFER[WK_COUNT++] = _getch();
 
     #else
 
@@ -199,16 +209,13 @@ static int wk_read_input( int fd )
     size_t pending = 0;
     ssize_t result = 0;
 
-    if (WK_COUNT > 0) return 0;
-
     // set terminal to non-canonical mode
     tcgetattr(STDIN_FILENO, &t);
     tc_previous = t.c_lflag;
     t.c_lflag = t.c_lflag & (tcflag_t) (~(ICANON | ECHO));
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 
-    // wait for the next character
-    WK_BEGIN = WK_COUNT = 0;
+    // wait for the first character
     result = read(fd, WK_BUFFER, 1);
     if (result == 1)
     {
@@ -229,9 +236,9 @@ static int wk_read_input( int fd )
     t.c_lflag = tc_previous;
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 
-    return WK_COUNT;
-
     #endif
+
+    return WK_COUNT;
 }
 
 
@@ -390,12 +397,66 @@ static int wk_read(
 
 /***** BEGIN OF AUTO-GENERATED CODE *****/
 #define RESET_AND_RETURN(x)  do { WK_COUNT = 0; return (x); } while(0)
+static const char *WK_WINDOWS = "windows";
 static const char *WK_XTERM = "xterm";
 static const char *WK_LINUX = "linux";
-static const char *wk_currentTerm = NULL;
 
 static int wk_unix_waitKey()
 {
+    if (wk_getTerm() == WK_WINDOWS) /* yes, comparing pointers */
+    {
+        int input = wk_read(1);
+        if (input == 0)
+        {
+            int input = wk_read(0);
+            if (input == 77) RESET_AND_RETURN(WKK_LEFT);
+            else
+            if (input == 75) RESET_AND_RETURN(WKK_RIGHT);
+            else
+            if (input == 73) RESET_AND_RETURN(WKK_PGUP);
+            else
+            if (input == 72) RESET_AND_RETURN(WKK_UP);
+            else
+            if (input == 71) RESET_AND_RETURN(WKK_HOME);
+            else
+            if (input == 82) RESET_AND_RETURN(WKK_INS);
+            else
+            if (input == 83) RESET_AND_RETURN(WKK_DELETE);
+            else
+            if (input == 80) RESET_AND_RETURN(WKK_DOWN);
+            else
+            if (input == 81) RESET_AND_RETURN(WKK_PGDN);
+            else
+            if (input == 79) RESET_AND_RETURN(WKK_END);
+            RESET_AND_RETURN(WKK_NONE);
+        }
+        else
+        if (input == 224)
+        {
+            int input = wk_read(0);
+            if (input == 77) RESET_AND_RETURN(WKK_LEFT);
+            else
+            if (input == 75) RESET_AND_RETURN(WKK_RIGHT);
+            else
+            if (input == 73) RESET_AND_RETURN(WKK_PGUP);
+            else
+            if (input == 72) RESET_AND_RETURN(WKK_UP);
+            else
+            if (input == 71) RESET_AND_RETURN(WKK_HOME);
+            else
+            if (input == 82) RESET_AND_RETURN(WKK_INS);
+            else
+            if (input == 83) RESET_AND_RETURN(WKK_DELETE);
+            else
+            if (input == 80) RESET_AND_RETURN(WKK_DOWN);
+            else
+            if (input == 81) RESET_AND_RETURN(WKK_PGDN);
+            else
+            if (input == 79) RESET_AND_RETURN(WKK_END);
+            RESET_AND_RETURN(WKK_NONE);
+        }
+        RESET_AND_RETURN(input);
+    }
     if (wk_getTerm() == WK_XTERM) /* yes, comparing pointers */
     {
         int input = wk_read(1);
@@ -523,6 +584,7 @@ const char *wk_getTerm()
     if (wk_currentTerm != NULL) return wk_currentTerm;
     wk_currentTerm = getenv("TERM");
     if (wk_currentTerm == NULL) return wk_currentTerm = WK_XTERM;
+    if (strcmp(wk_currentTerm, "windows") == 0) return wk_currentTerm = WK_WINDOWS;
     if (strcmp(wk_currentTerm, "xterm") == 0) return wk_currentTerm = WK_XTERM;
     if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WK_LINUX;
     return wk_currentTerm = WK_XTERM;
