@@ -162,6 +162,8 @@ int wk_waitKey();
 
 const char *wk_getTerm();
 
+void wk_screenSize( int *rows, int *cols );
+
 
 #ifdef WK_IMPLEMENTATION
 
@@ -186,7 +188,7 @@ static int WK_BEGIN = 0;
 static int WK_COUNT = 0;
 
 
-static int wk_read_input( int fd )
+static int wk_read_input()
 {
     if (WK_COUNT > 0) return 0;
 
@@ -194,12 +196,10 @@ static int wk_read_input( int fd )
 
     #ifdef WK_WINDOWS
 
-    (void) fd;
-
     // wait for the first character
     WK_BUFFER[WK_COUNT++] = _getch();
     // read all remaining characters
-    while (kbhit() && WK_COUNT < sizeof(WK_BUFFER))
+    while (_kbhit() && WK_COUNT < sizeof(WK_BUFFER))
         WK_BUFFER[WK_COUNT++] = _getch();
 
     #else
@@ -216,17 +216,17 @@ static int wk_read_input( int fd )
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 
     // wait for the first character
-    result = read(fd, WK_BUFFER, 1);
+    result = read(STDIN_FILENO, WK_BUFFER, 1);
     if (result == 1)
     {
         WK_COUNT = 1;
         // check whether we have any more data
-        ioctl(fd, FIONREAD, &pending);
+        ioctl(STDIN_FILENO, FIONREAD, &pending);
         if (pending > sizeof(WK_BUFFER) - (size_t) WK_COUNT)
             pending = sizeof(WK_BUFFER) - (size_t) WK_COUNT;
         if (pending)
         {
-            result = read(fd, WK_BUFFER + WK_COUNT, pending);
+            result = read(STDIN_FILENO, WK_BUFFER + WK_COUNT, pending);
             if (result == (ssize_t) pending) WK_COUNT += (int) pending;
         }
         //printf("Read %d characters\n", WK_COUNT);
@@ -383,7 +383,7 @@ static int wk_interpret(
 static int wk_read(
     int deviceRead )
 {
-    if (WK_COUNT != 0 || (deviceRead && wk_read_input(STDIN_FILENO) > 0))
+    if (WK_COUNT != 0 || (deviceRead && wk_read_input() > 0))
     {
         //printf("Consumed 1 character from %d\n", WK_COUNT);
         WK_COUNT--;
@@ -395,15 +395,16 @@ static int wk_read(
     return WKK_NONE;
 }
 
+
 /***** BEGIN OF AUTO-GENERATED CODE *****/
 #define RESET_AND_RETURN(x)  do { WK_COUNT = 0; return (x); } while(0)
-static const char *WK_WINDOWS = "windows";
-static const char *WK_XTERM = "xterm";
-static const char *WK_LINUX = "linux";
+static const char *WKT_WINDOWS = "windows";
+static const char *WKT_XTERM = "xterm";
+static const char *WKT_LINUX = "linux";
 
-static int wk_unix_waitKey()
+int wk_waitKey()
 {
-    if (wk_getTerm() == WK_WINDOWS) /* yes, comparing pointers */
+    if (wk_getTerm() == WKT_WINDOWS) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == 0)
@@ -457,7 +458,7 @@ static int wk_unix_waitKey()
         }
         RESET_AND_RETURN(input);
     }
-    if (wk_getTerm() == WK_XTERM) /* yes, comparing pointers */
+    if (wk_getTerm() == WKT_XTERM) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == WKK_ESCAPE)
@@ -511,7 +512,7 @@ static int wk_unix_waitKey()
         }
         RESET_AND_RETURN(input);
     }
-    if (wk_getTerm() == WK_LINUX) /* yes, comparing pointers */
+    if (wk_getTerm() == WKT_LINUX) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == WKK_ESCAPE)
@@ -581,26 +582,44 @@ static int wk_unix_waitKey()
 const char *wk_getTerm()
 {
     static const char *wk_currentTerm = NULL;
+    #ifdef WK_WINDOWS
+    return wk_currentTerm = WKT_WINDOWS;
+    #else
     if (wk_currentTerm != NULL) return wk_currentTerm;
     wk_currentTerm = getenv("TERM");
-    if (wk_currentTerm == NULL) return wk_currentTerm = WK_XTERM;
-    if (strcmp(wk_currentTerm, "windows") == 0) return wk_currentTerm = WK_WINDOWS;
-    if (strcmp(wk_currentTerm, "xterm") == 0) return wk_currentTerm = WK_XTERM;
-    if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WK_LINUX;
-    return wk_currentTerm = WK_XTERM;
+    if (wk_currentTerm == NULL) return wk_currentTerm = WKT_XTERM;
+    if (strcmp(wk_currentTerm, "windows") == 0) return wk_currentTerm = WKT_WINDOWS;
+    if (strcmp(wk_currentTerm, "xterm") == 0) return wk_currentTerm = WKT_XTERM;
+    if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WKT_LINUX;
+    return wk_currentTerm = WKT_XTERM;
+    #endif
 }
 #undef RESET_AND_RETURN
 /***** END OF AUTO-GENERATED CODE *****/
 
 
-int wk_waitKey()
+void wk_screenSize( int *rows, int *cols )
 {
-    #ifdef WK_WINDOWS
-    #error bla
+    #ifdef __WINDOWS__
+
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFOEX info;
+	if (GetConsoleScreenBufferInfoEx(handle, &info) == TRUE)
+	{
+		if (rows) *rows = info.dwSize.Y;
+		if (cols) *cols = info.dwSize.X;
+	}
+
     #else
-    return wk_unix_waitKey();
+
+    struct winsize sz;
+    if (ioctl(0, TIOCGWINSZ, &sz) != 0) return;
+    if (rows) *rows = sz.ws_row;
+    if (cols) *cols = sz.ws_col;
+
     #endif
 }
+
 
 #endif // WK_IMPLEMENTATION
 

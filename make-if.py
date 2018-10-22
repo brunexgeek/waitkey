@@ -66,17 +66,17 @@ def printLevel( table, no ):
         print('%s}' % makeTab(no))
 
 
-def printUnixWaitKey(terms):
+def printWaitKey(terms):
     indent = makeTab(1)
 
     # static variables for each known terminal
     for kterm, vterm in terms.items():
-        print('static const char *WK_%s = "%s";' % (kterm.upper(), kterm))
+        print('static const char *WKT_%s = "%s";' % (kterm.upper(), kterm))
 
     # print 'wk_unix_waitKey' function
-    print('\nstatic int wk_unix_waitKey()\n{')
+    print('\int wk_waitKey()\n{')
     for kterm, vterm in terms.items():
-        sys.stdout.write('%sif (wk_getTerm() == WK_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
+        sys.stdout.write('%sif (wk_getTerm() == WKT_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
         printLevel(vterm, 1)
     print('%sRESET_AND_RETURN(WKK_NONE);\n}' % indent)
 
@@ -86,12 +86,16 @@ def printGetTerm(terms):
 const char *wk_getTerm()
 {
     static const char *wk_currentTerm = NULL;
+    #ifdef WK_WINDOWS
+    return wk_currentTerm = WKT_WINDOWS;
+    #else
     if (wk_currentTerm != NULL) return wk_currentTerm;
     wk_currentTerm = getenv("TERM");
-    if (wk_currentTerm == NULL) return wk_currentTerm = WK_XTERM;''')
+    if (wk_currentTerm == NULL) return wk_currentTerm = WKT_XTERM;''')
     for kterm, vterm in terms.items():
-        print('    if (strcmp(wk_currentTerm, "%s") == 0) return wk_currentTerm = WK_%s;' % (kterm, kterm.upper()))
-    print('''    return wk_currentTerm = WK_XTERM;
+        print('    if (strcmp(wk_currentTerm, "%s") == 0) return wk_currentTerm = WKT_%s;' % (kterm, kterm.upper()))
+    print('''    return wk_currentTerm = WKT_XTERM;
+    #endif
 }''')
 
 
@@ -118,7 +122,7 @@ with open('terms.txt', 'rt') as f:
 
 print('/***** BEGIN OF AUTO-GENERATED CODE *****/')
 print('#define RESET_AND_RETURN(x)  do { WK_COUNT = 0; return (x); } while(0)')
-printUnixWaitKey(terms)
+printWaitKey(terms)
 printGetTerm(terms)
 print('#undef RESET_AND_RETURN')
 print('/***** END OF AUTO-GENERATED CODE *****/')
