@@ -1,7 +1,7 @@
-# waitkey  ![MIT License](https://img.shields.io/github/license/mashape/apistatus.svg)
+# waitkey  ![MIT License](https://img.shields.io/github/license/mashape/apistatus.svg) ![Compatible with GNU/Linux and Windows](https://img.shields.io/badge/compatible-gnu/linux%20%7C%20windows-lightgray.svg)
 
 
-Single-file implementation of `waitKey` function compatible with GNU/Linux (and soon Windows). No need for external dependencies.
+Single-file implementation of `waitKey` function compatible with GNU/Linux and Windows. No need for external dependencies.
 
 The `waitKey` function waits for the user to press any key and return its code. The key pressed is not echoed on the screen.
 
