@@ -31,8 +31,9 @@ Currently this implementation can identify and work with the following terminals
 
 * xterm
 * linux
+* windows
 
-By default, *xterm* is used if no terminal can be identified.
+By default, *xterm* (GNU/Linux) or *windows* (Windows) is used if no terminal can be identified.
 
 ## How to use
 
