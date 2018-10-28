@@ -154,16 +154,37 @@ enum
     WKK_INS,
 };
 
+enum wk_color_t
+{
+    WKC_BLACK = 0,
+    WKC_RED,
+    WKC_GREEN,
+    WKC_YELLOW,
+    WKC_BLUE,
+    WKC_MAGENTA,
+    WKC_CYAN,
+    WKC_WHITE,
+    WKC_KEEP,
+    WKC_DEFAULT
+};
+
 #ifndef WK_NO_NAMES
 const char *wk_keyName( int key );
 #endif
 
-int wk_waitKey();
+int WkWaitKey();
 
-const char *wk_getTerm();
+const char *WkGetTerminal();
 
-void wk_screenSize( int *rows, int *cols );
+void WkGetScreenSize(
+    int *rows,
+    int *cols );
 
+void WkSetColor(
+    int foreground,
+    int background );
+
+#define WkResetColor()  WkSetColor(WKC_DEFAULT, WKC_DEFAULT)
 
 #ifdef WK_IMPLEMENTATION
 
@@ -244,7 +265,7 @@ static int wk_read_input()
 
 #ifndef WK_NO_NAMES
 
-const char *wk_keyName(
+const char *WkGetKeyName(
     int key )
 {
     switch (key)
@@ -402,9 +423,9 @@ static const char *WKT_WINDOWS = "windows";
 static const char *WKT_XTERM = "xterm";
 static const char *WKT_LINUX = "linux";
 
-int wk_waitKey()
+int WkWaitKey()
 {
-    if (wk_getTerm() == WKT_WINDOWS) /* yes, comparing pointers */
+    if (WkGetTerminal() == WKT_WINDOWS) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == 0)
@@ -458,7 +479,7 @@ int wk_waitKey()
         }
         RESET_AND_RETURN(input);
     }
-    if (wk_getTerm() == WKT_XTERM) /* yes, comparing pointers */
+    if (WkGetTerminal() == WKT_XTERM) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == WKK_ESCAPE)
@@ -512,7 +533,7 @@ int wk_waitKey()
         }
         RESET_AND_RETURN(input);
     }
-    if (wk_getTerm() == WKT_LINUX) /* yes, comparing pointers */
+    if (WkGetTerminal() == WKT_LINUX) /* yes, comparing pointers */
     {
         int input = wk_read(1);
         if (input == WKK_ESCAPE)
@@ -579,7 +600,7 @@ int wk_waitKey()
     RESET_AND_RETURN(WKK_NONE);
 }
 
-const char *wk_getTerm()
+const char *WkGetTerminal()
 {
     static const char *wk_currentTerm = NULL;
     #ifdef WK_WINDOWS
@@ -598,9 +619,9 @@ const char *wk_getTerm()
 /***** END OF AUTO-GENERATED CODE *****/
 
 
-void wk_screenSize( int *rows, int *cols )
+void WkGetScreenSize( int *rows, int *cols )
 {
-    #ifdef __WINDOWS__
+    #ifdef WK_WINDOWS
 
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFOEX info;
@@ -618,6 +639,26 @@ void wk_screenSize( int *rows, int *cols )
         if (rows) *rows = sz.ws_row;
         if (cols) *cols = sz.ws_col;
     }
+
+    #endif
+}
+
+
+void WkSetColor(
+    int foreground,
+    int background )
+{
+    if (foreground < 0 || foreground > 9) return;
+    if (background < 0 || background > 9) return;
+
+    #ifdef WK_WINDOWS
+
+    #else
+
+    if (foreground != WKC_KEEP)
+        printf("\033[3%dm", foreground);
+    if (background != WKC_KEEP)
+        printf("\033[4%dm", background);
 
     #endif
 }

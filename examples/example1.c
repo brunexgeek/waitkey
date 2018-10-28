@@ -8,9 +8,9 @@ int main (int argc, char **argv )
 {
 	(void) argc;
 	(void) argv;
-	printf("Terminal: '%s'\n", wk_getTerm());
-	printf("Use SHIFT+Q to exit\n\n");
+	printf("Terminal: '%s'\n", WkGetTerminal());
+	printf("Press capital 'q' to exit\n\n");
 	int input = 0;
-	while (input != WKK_CAP_Q) printf("%s\n", wk_keyName(input = wk_waitKey()));
+	while (input != WKK_CAP_Q) printf("%s\n", WkGetKeyName(input = WkWaitKey()));
 	return 0;
 }

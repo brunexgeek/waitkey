@@ -73,17 +73,17 @@ def printWaitKey(terms):
     for kterm, vterm in terms.items():
         print('static const char *WKT_%s = "%s";' % (kterm.upper(), kterm))
 
-    # print 'wk_unix_waitKey' function
-    print('\int wk_waitKey()\n{')
+    # print 'WkWaitKey' function
+    print('\int WkWaitKey()\n{')
     for kterm, vterm in terms.items():
-        sys.stdout.write('%sif (wk_getTerm() == WKT_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
+        sys.stdout.write('%sif (WkGetTerminal() == WKT_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
         printLevel(vterm, 1)
     print('%sRESET_AND_RETURN(WKK_NONE);\n}' % indent)
 
 
 def printGetTerm(terms):
     print('''
-const char *wk_getTerm()
+const char *WkGetTerminal()
 {
     static const char *wk_currentTerm = NULL;
     #ifdef WK_WINDOWS
