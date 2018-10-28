@@ -606,16 +606,18 @@ void wk_screenSize( int *rows, int *cols )
 	CONSOLE_SCREEN_BUFFER_INFOEX info;
 	if (GetConsoleScreenBufferInfoEx(handle, &info) == TRUE)
 	{
-		if (rows) *rows = info.dwSize.Y;
-		if (cols) *cols = info.dwSize.X;
+		if (rows) *rows = info.srWindow.Bottom - info.swWindow.Top;
+		if (cols) *cols = info.srWindow.Right - info.swWindow.Left;
 	}
 
     #else
 
     struct winsize sz;
-    if (ioctl(0, TIOCGWINSZ, &sz) != 0) return;
-    if (rows) *rows = sz.ws_row;
-    if (cols) *cols = sz.ws_col;
+    if (ioctl(0, TIOCGWINSZ, &sz) == 0)
+    {
+        if (rows) *rows = sz.ws_row;
+        if (cols) *cols = sz.ws_col;
+    }
 
     #endif
 }
