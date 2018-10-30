@@ -1,9 +1,9 @@
 # waitkey  ![MIT License](https://img.shields.io/github/license/mashape/apistatus.svg) ![Compatible with GNU/Linux and Windows](https://img.shields.io/badge/compatible-gnu/linux%20%7C%20windows-lightgray.svg)
 
 
-Single-file implementation of `waitKey` function compatible with GNU/Linux and Windows. No need for external dependencies.
+Single-file implementation of *waitKey* functionality compatible with GNU/Linux and Windows. No need for external dependencies.
 
-The `waitKey` function waits for the user to press any key and return its code. The key pressed is not echoed on the screen.
+The idea is to provide a function that waits for the user to press any key and return its code. The key pressed is not echoed on the screen.
 
 ```c
 // adds the actual implementation with this inclusion
@@ -12,18 +12,21 @@ The `waitKey` function waits for the user to press any key and return its code. 
 
 ...
 
-int input = wk_waitKey();
+int input = WkWaitKey();
 if (input == WKK_UP) {
     printf("You pressed up arrow\n");
 }
 ```
 
-The `waitKey` function can detect every printable ASCII character and some special keys (e.g. arrows, insert, page down).
+The `WkWaitKey` function can detect every printable ASCII character and some special keys (e.g. arrows, insert, page down).
 
 Other functions:
 
-* `wk_keyName`: returns the name of a key (e.g. "WKK_A" for WKK_A)
-* `wk_getTerm`: returns the name of the current terminal (e.g. "xterm")
+* `WkGetKeyName`: returns the name of a key (e.g. "WKK_A" for WKK_A).
+* `WkGetTerminal`: returns the name of the current terminal (e.g. "xterm").
+* `WkSetColor`: set the current foreground and/or background color.
+* `WkResetColor`: set the foreground and background colors to its default.
+* `WkGetScreenSize`: returns the amount of rows and columns in the screen.
 
 ## Supported terminals
 
@@ -41,7 +44,7 @@ Just copy `waitkey.h` to your project and include it wherever needed. You must s
 
 ## Why not use the library *XYZ*?
 
-The main goal here is to provide a minimal `waitkey` functionality without depending on extra libraries and provide support for both GNU/Linux and Windows. If you need something more ~~fancy~~ complete, you probably should use *ncurses* or other stuff.
+The main goal here is to provide a minimal *waitkey* functionality without depending on extra libraries and provide support for both GNU/Linux and Windows. If you need something more ~~fancy~~ complete, you probably should use *ncurses* or other stuff.
 
 ## License
 

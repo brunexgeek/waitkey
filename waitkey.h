@@ -169,7 +169,7 @@ enum wk_color_t
 };
 
 #ifndef WK_NO_NAMES
-const char *wk_keyName( int key );
+const char *WkGetKeyName( int key );
 #endif
 
 int WkWaitKey();
@@ -654,6 +654,8 @@ void WkSetColor(
     #ifdef WK_WINDOWS
 
     #else
+
+    if (!isatty(STDOUT_FILENO)) return;
 
     if (foreground != WKC_KEEP)
         printf("\033[3%dm", foreground);
