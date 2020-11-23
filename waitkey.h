@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Bruno Ribeiro
+ * Copyright (c) 2020 Bruno Ribeiro
  * Website: https://github.com/brunexgeek/waitkey
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -173,16 +173,10 @@ const char *WkGetKeyName( int key );
 #endif
 
 int WkWaitKey();
-
 const char *WkGetTerminal();
-
-void WkGetScreenSize(
-    int *rows,
-    int *cols );
-
-void WkSetColor(
-    int foreground,
-    int background );
+void WkGetScreenSize( int *rows, int *cols );
+void WkSetColor( int foreground, int background );
+int WkIsTerminal();
 
 #define WkResetColor()  WkSetColor(WKC_DEFAULT, WKC_DEFAULT)
 
@@ -265,8 +259,7 @@ static int wk_read_input()
 
 #ifndef WK_NO_NAMES
 
-const char *WkGetKeyName(
-    int key )
+const char *WkGetKeyName( int key )
 {
     switch (key)
     {
@@ -387,8 +380,7 @@ const char *WkGetKeyName(
 #endif // !WK_NO_NAMES
 
 
-static int wk_interpret(
-    const char value )
+static int wk_interpret( const char value )
 {
     if (value != WKK_ESCAPE)
     {
@@ -401,15 +393,14 @@ static int wk_interpret(
 }
 
 
-static int wk_read(
-    int deviceRead )
+static int wk_read( int deviceRead )
 {
     if (WK_COUNT != 0 || (deviceRead && wk_read_input() > 0))
     {
         //printf("Consumed 1 character from %d\n", WK_COUNT);
         WK_COUNT--;
         #ifdef WK_DEBUG
-        printf("%d\n", WK_BUFFER[WK_BEGIN]);
+        printf("%d [%s]\n", WK_BUFFER[WK_BEGIN], WkGetKeyName(WK_BUFFER[WK_BEGIN]));
         #endif
         return wk_interpret(WK_BUFFER[WK_BEGIN++]);
     }
@@ -600,24 +591,26 @@ int WkWaitKey()
     RESET_AND_RETURN(WKK_NONE);
 }
 
-const char *WkGetTerminal()
+
+static const char *wk_match_term( const char *def )
 {
-    static const char *wk_currentTerm = NULL;
-    #ifdef WK_WINDOWS
-    return wk_currentTerm = WKT_WINDOWS;
-    #else
-    if (wk_currentTerm != NULL) return wk_currentTerm;
-    wk_currentTerm = getenv("TERM");
-    if (wk_currentTerm == NULL) return wk_currentTerm = WKT_XTERM;
-    if (strcmp(wk_currentTerm, "windows") == 0) return wk_currentTerm = WKT_WINDOWS;
-    if (strcmp(wk_currentTerm, "xterm") == 0) return wk_currentTerm = WKT_XTERM;
-    if (strcmp(wk_currentTerm, "linux") == 0) return wk_currentTerm = WKT_LINUX;
-    return wk_currentTerm = WKT_XTERM;
-    #endif
+    const char *value = getenv("TERM");
+    if (strncmp(value, "windows", 7) == 0) return WKT_WINDOWS;
+    if (strncmp(value, "xterm", 5) == 0) return WKT_XTERM;
+    if (strncmp(value, "linux", 5) == 0) return WKT_LINUX;
+    return def;
 }
 #undef RESET_AND_RETURN
 /***** END OF AUTO-GENERATED CODE *****/
 
+const char *WkGetTerminal()
+{
+    #ifdef WK_WINDOWS
+    return wk_match_term(WKT_WINDOWS);
+    #else
+    return wk_match_term(WKT_XTERM);
+    #endif
+}
 
 void WkGetScreenSize( int *rows, int *cols )
 {

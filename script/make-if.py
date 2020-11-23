@@ -74,7 +74,7 @@ def printWaitKey(terms):
         print('static const char *WKT_%s = "%s";' % (kterm.upper(), kterm))
 
     # print 'WkWaitKey' function
-    print('\int WkWaitKey()\n{')
+    print('\nint WkWaitKey()\n{')
     for kterm, vterm in terms.items():
         sys.stdout.write('%sif (WkGetTerminal() == WKT_%s) /* yes, comparing pointers */' % (indent, kterm.upper()))
         printLevel(vterm, 1)
@@ -83,19 +83,12 @@ def printWaitKey(terms):
 
 def printGetTerm(terms):
     print('''
-const char *WkGetTerminal()
+static const char *wk_match_term( const char *def )
 {
-    static const char *wk_currentTerm = NULL;
-    #ifdef WK_WINDOWS
-    return wk_currentTerm = WKT_WINDOWS;
-    #else
-    if (wk_currentTerm != NULL) return wk_currentTerm;
-    wk_currentTerm = getenv("TERM");
-    if (wk_currentTerm == NULL) return wk_currentTerm = WKT_XTERM;''')
+    const char *value = getenv("TERM");''')
     for kterm, vterm in terms.items():
-        print('    if (strcmp(wk_currentTerm, "%s") == 0) return wk_currentTerm = WKT_%s;' % (kterm, kterm.upper()))
-    print('''    return wk_currentTerm = WKT_XTERM;
-    #endif
+        print('    if (strncmp(value, "%s", %d) == 0) return WKT_%s;' % (kterm, len(kterm), kterm.upper()))
+    print('''    return def;
 }''')
 
 
