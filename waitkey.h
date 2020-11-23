@@ -641,6 +641,7 @@ void WkSetColor(
     int foreground,
     int background )
 {
+    if (!WkIsTerminal()) return;
     if (foreground < 0 || foreground > 9) return;
     if (background < 0 || background > 9) return;
 
@@ -655,6 +656,16 @@ void WkSetColor(
     if (background != WKC_KEEP)
         printf("\033[4%dm", background);
 
+    #endif
+}
+
+
+int WkIsTerminal()
+{
+    #ifdef WK_WINDOWS
+    return _isatty( _fileno( stdout ) );
+    #else
+    return isatty(STDIN_FILENO);
     #endif
 }
 
