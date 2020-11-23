@@ -11,6 +11,13 @@ int main (int argc, char **argv )
 	printf("Terminal: '%s'\n", WkGetTerminal());
 	printf("Press capital 'q' to exit\n\n");
 	int input = 0;
-	while (input != WKK_CAP_Q) printf("%s\n", WkGetKeyName(input = WkWaitKey()));
+	while (input != WKK_CAP_Q)
+	{
+		WkResetColor();
+		const char *name = WkGetKeyName(input = WkWaitKey());
+		WkSetColor(WKC_RED, WKC_DEFAULT);
+		printf("%s\n\n", name);
+	}
+	WkResetColor();
 	return 0;
 }
