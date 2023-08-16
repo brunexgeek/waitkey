@@ -644,12 +644,18 @@ void WkSetColor(
     if (!WkIsTerminal()) return;
     if (foreground < 0 || foreground > 9) return;
     if (background < 0 || background > 9) return;
+    if (foreground == WKC_KEEP && background == WKC_KEEP) return;
 
     #ifdef WK_WINDOWS
 
-    #else
+    HANDLE hnd = GetStdHandle( STD_OUTPUT_HANDLE );
+    WORD atts;
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(hnd, &info);
+    atts = info.wAttributes;
+    SetConsoleTextAttribute ( h, FOREGROUND_RED );
 
-    if (!isatty(STDOUT_FILENO)) return;
+    #else
 
     if (foreground != WKC_KEEP)
         printf("\033[3%dm", foreground);
